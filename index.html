@@ -49,6 +49,12 @@
             background: #fff;
             border-radius: 5px;
         }
+        pre {
+            background: #eee;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
         footer {
             background-color: #333;
             color: #fff;
@@ -73,48 +79,141 @@
         <!-- Home Section -->
         <section id="home" class="main">
             <h2>Welcome to the Snake and Ladder Game Tutorial!</h2>
-            <p>This tutorial will guide you through creating a simple Snake and Ladder game using HTML, CSS, and JavaScript. Whether you're a beginner or an experienced developer, this tutorial will help you build a fun and interactive game.</p>
+            <p>This tutorial will guide you through creating a simple but fun Snake and Ladder game using HTML, CSS, and JavaScript. You'll learn how to set up the game board, add game logic for snakes and ladders, and make the game interactive and playable.</p>
         </section>
 
         <!-- Steps Section -->
         <section id="steps" class="steps">
             <h2>Steps to Create the Game</h2>
             <ol>
-                <li>Set up the game board layout using HTML and CSS.</li>
-                <li>Create the game logic with JavaScript, including rolling dice, moving players, and handling snakes and ladders.</li>
-                <li>Add functionality to determine the winner.</li>
-                <li>Style the game to make it visually appealing.</li>
-                <li>Test and debug your game to ensure it works smoothly.</li>
+                <li>**Set Up the Board**: Create a 10x10 grid using HTML and CSS to represent the game board.</li>
+                <li>**Add Snakes and Ladders**: Place snakes and ladders on specific squares on the board.</li>
+                <li>**Dice Roll Mechanism**: Implement a dice roll feature that determines the number of steps a player can move.</li>
+                <li>**Player Movement**: Create logic to move the player’s piece across the board, handling snakes and ladders.</li>
+                <li>**Winning Condition**: Add a condition to check when a player reaches the final square (100) and wins the game.</li>
+                <li>**Styling**: Style the game board, player pieces, and overall layout to make it visually appealing.</li>
             </ol>
         </section>
 
         <!-- Code Section -->
         <section id="code" class="main">
-            <h2>Full Code</h2>
-            <p>Below is the complete code for the Snake and Ladder game:</p>
+            <h2>Complete Game Code</h2>
+            <p>Here is the complete code for the Snake and Ladder game. Copy and paste the code into your files, and follow along with the tutorial to understand each part.</p>
             <pre><code>
-// HTML Structure
+&lt;!-- HTML --&gt;
 &lt;div id="board"&gt;&lt;/div&gt;
-// CSS for the Board
+&lt;div id="controls"&gt;
+    &lt;button onclick="rollDice()"&gt;Roll Dice&lt;/button&gt;
+    &lt;p id="diceResult"&gt;Dice: -&lt;/p&gt;
+    &lt;p id="playerPosition"&gt;Player Position: 1&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;!-- CSS --&gt;
 #board {
     display: grid;
     grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
     grid-gap: 2px;
     width: 400px;
     height: 400px;
     margin: 20px auto;
+    background-color: #eee;
 }
-// JavaScript for Game Logic
-let playerPosition = 0;
+#board div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    font-size: 12px;
+    position: relative;
+}
+#controls {
+    text-align: center;
+    margin-top: 20px;
+}
+#player {
+    width: 20px;
+    height: 20px;
+    background-color: red;
+    border-radius: 50%;
+    position: absolute;
+}
+
+&lt;!-- JavaScript --&gt;
+let playerPosition = 1;
+
 function rollDice() {
     let diceValue = Math.floor(Math.random() * 6) + 1;
+    document.getElementById('diceResult').innerText = `Dice: ${diceValue}`;
     movePlayer(diceValue);
 }
+
 function movePlayer(diceValue) {
     playerPosition += diceValue;
-    // Check for snakes or ladders here...
+    if (playerPosition > 100) {
+        playerPosition = 100;
+    }
+    document.getElementById('playerPosition').innerText = `Player Position: ${playerPosition}`;
+    updatePlayerPosition();
+    checkSnakesAndLadders();
+    checkWin();
 }
-// Additional code will go here...
+
+function updatePlayerPosition() {
+    let board = document.getElementById('board');
+    let cells = board.getElementsByTagName('div');
+    for (let cell of cells) {
+        cell.innerHTML = '';
+    }
+    let currentCell = cells[playerPosition - 1];
+    let player = document.createElement('div');
+    player.id = 'player';
+    currentCell.appendChild(player);
+}
+
+function checkSnakesAndLadders() {
+    let snakesAndLadders = {
+        17: 7,
+        54: 34,
+        62: 19,
+        98: 79,
+        9: 31,
+        40: 59,
+        51: 87,
+        72: 91
+    };
+    if (snakesAndLadders[playerPosition]) {
+        playerPosition = snakesAndLadders[playerPosition];
+        document.getElementById('playerPosition').innerText = `Player Position: ${playerPosition}`;
+        updatePlayerPosition();
+    }
+}
+
+function checkWin() {
+    if (playerPosition === 100) {
+        alert('Congratulations! You have won the game!');
+        resetGame();
+    }
+}
+
+function resetGame() {
+    playerPosition = 1;
+    document.getElementById('playerPosition').innerText = `Player Position: 1`;
+    document.getElementById('diceResult').innerText = 'Dice: -';
+    updatePlayerPosition();
+}
+
+// Initialize the board
+(function initBoard() {
+    let board = document.getElementById('board');
+    for (let i = 100; i > 0; i--) {
+        let cell = document.createElement('div');
+        cell.innerText = i;
+        board.appendChild(cell);
+    }
+    updatePlayerPosition();
+})();
             </code></pre>
         </section>
 
@@ -124,6 +223,12 @@ function movePlayer(diceValue) {
             <p>Try out the Snake and Ladder game below!</p>
             <div id="game-demo">
                 <!-- Embed the game demo here -->
+                <div id="board"></div>
+                <div id="controls">
+                    <button onclick="rollDice()">Roll Dice</button>
+                    <p id="diceResult">Dice: -</p>
+                    <p id="playerPosition">Player Position: 1</p>
+                </div>
             </div>
         </section>
     </div>
@@ -131,5 +236,9 @@ function movePlayer(diceValue) {
     <footer>
         <p>Snake and Ladder Game Tutorial &copy; 2024</p>
     </footer>
+
+    <script>
+        // Paste the JavaScript code here
+    </script>
 </body>
 </html>
